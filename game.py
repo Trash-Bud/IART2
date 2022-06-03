@@ -36,7 +36,7 @@ class Game:
                 ]
 
             board.add_snake(snake)
-            chess_pieces = ["Q2","Q1"]
+            chess_pieces = ["K1","Q1"]
 
         except Exception as e:
             print(str(e))
