@@ -1,4 +1,3 @@
-
 class Position:
     def __init__(self, X: int, Y: int):
         self.x = X

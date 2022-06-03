@@ -2,10 +2,6 @@ from board import Board
 from chess_piece import ChessPiece
 from constants import PIECES_DIC
 from gym import Env
-from gym.spaces import MultiDiscrete
-import numpy as np
-import random
-
 from position import Position
 
 class SnakeChessEnv(Env):
@@ -17,9 +13,8 @@ class SnakeChessEnv(Env):
         self.chess_pieces = chess_pieces
         # index of the piece that will be played next
         self.piece_num = 0
-        # coordinates of all the pieces at the current moment
-        # [-1,-1] means the piece has not been placed on the board yet
-        self.state = [[-1,-1],[-1,-1]] # !!! only works for 2 chess pieces !!!
+        # initializing state
+        self.state = self.create_initial_state()
         # creates an array of all possible states
         self.generate_states_array() # !!! only works for 2 chess pieces !!!
         # creates an array of all possible actions
@@ -29,18 +24,27 @@ class SnakeChessEnv(Env):
         # length of the observation space
         self.observation_space_length = len(self.states_array) # !!! only works for 2 chess pieces !!!
 
+    # function that initialized the state
+    def create_initial_state(self):
+        state = []
+        # coordinates of all the pieces at the current moment
+        for i in range(0, len(self.chess_pieces)):
+            # [-1,-1] means the piece has not been placed on the board yet
+            state.append([-1,-1])
+        return state
+
     # creates the states' array
+    # !! only works for two pieces !!
     def generate_states_array(self):
         self.states_array = []
 
         # appending initial state
-        self.states_array.append([[-1,-1],[-1,-1]])
+        self.states_array.append(self.create_initial_state())
 
         playable_squares = self.board.playable_squares()
         for i in range(0,self.board.size):
             for e in range(0,self.board.size):
                 if ([i,e] in playable_squares):
-
                     # appending all states where the first chess piece has been placed but the second one has not 
                     self.states_array.append([[i,e],[-1,-1]])
 
@@ -117,6 +121,6 @@ class SnakeChessEnv(Env):
         # resetting the index of the next chess piece to be played
         self.piece_num = 0
         # resetting state to initial state
-        self.state = [[-1,-1],[-1,-1]] # !!! only works for 2 chess pieces !!!
+        self.state = self.create_initial_state()
         # returning initial state
         return self.get_state(self.state)

@@ -1,11 +1,8 @@
-
-from cmath import pi
 import random
 
 import numpy as np
 from board import Board
-from chess_piece import ChessPiece
-from constants import PIECES_DIC
+from constants import ALPHA, EPISODES, EPSILON, GAMA
 from human_mode import HumanMode
 from position import Position
 from environment import SnakeChessEnv
@@ -86,17 +83,11 @@ class Game:
                 if env.get_state_from_index(i)[0] == env.get_action_from_index(e):
                     q_table[i][e] = -np.Infinity
 
-        #      
-        alpha = 0.1
-        #
-        gama = 0.6
-        # chance of choosing a random action to explore
-        epsilon = 0.1
+
         # amount of games lost
         lost = 0
-        # total number of episodes
-        episodes = 1000
-        for episode in range(1, episodes + 1):
+
+        for episode in range(1, EPISODES + 1):
             # env reset so we start fresh each episode
             state = env.reset()
 
@@ -105,7 +96,7 @@ class Game:
        
             while not done:
 
-                if random.uniform(0,1) < epsilon: # if choice is random
+                if random.uniform(0,1) < EPSILON: # if choice is random
                     # choosing an existing valid position for our chess piece
                     num = random.randint(0, env.board.playable_squares_num() - 1)
                     action_b = env.board.playable_squares()[num]
@@ -123,7 +114,7 @@ class Game:
                 next_max = np.max(q_table[next_state])
 
                 # calculating the new value with q-learning
-                new_value = (1-alpha) * old_value + alpha * (reward + gama * next_max)
+                new_value = (1-ALPHA) * old_value + ALPHA * (reward + GAMA * next_max)
 
                 # saving the new value for this state and action
                 q_table[state ,action] = new_value
@@ -139,7 +130,7 @@ class Game:
         print("lost ", end = "") 
         print(lost, end = "")
         print(" times in ", end = "")
-        print(episodes, end = "")
+        print(EPISODES, end = "")
         print(" tries")
         
         # resetting the state of the environment
@@ -169,17 +160,10 @@ class Game:
                 if env.get_state_from_index(i)[0] == env.get_action_from_index(e):
                     q_table[i][e] = -np.Infinity
 
-        #      
-        alpha = 0.1
-        #
-        gama = 0.6
-        # chance of choosing a random action to explore
-        epsilon = 0.1
+
         # amount of games lost
         lost = 0
-        # total number of episodes
-        episodes = 1000
-        for episode in range(1, episodes + 1):
+        for episode in range(1, EPISODES + 1):
             # env reset so we start fresh each episode
             state = env.reset()
 
@@ -187,7 +171,7 @@ class Game:
             done = False
 
             # calculating the first action before the episode really starts
-            if random.uniform(0,1) < epsilon: 
+            if random.uniform(0,1) < EPSILON: 
                 num = random.randint(0, env.board.playable_squares_num() - 1)
                 action_b = env.board.playable_squares()[num]
                 action = env.get_action(action_b)
@@ -200,7 +184,7 @@ class Game:
                 # getting the old value of the action on the old state
 
                 # choosing next action
-                if random.uniform(0,1) < epsilon:
+                if random.uniform(0,1) < EPSILON:
                     num = random.randint(0, env.board.playable_squares_num() - 1)
                     action_b = env.board.playable_squares()[num]
                     next_action = env.get_action(action_b)
@@ -212,8 +196,8 @@ class Game:
                 # getting the value of the next state with the next action calculated
                 next_max = q_table[next_state,next_action]
 
-                # calculating the new value with sarsa
-                new_value = old_value + alpha * ((reward + gama * next_max) - old_value)
+                # calculating the new value with SARSA
+                new_value = old_value + ALPHA * ((reward + GAMA * next_max) - old_value)
 
                 # saving the new value for this state and action
                 q_table[state, action] = new_value
@@ -231,7 +215,7 @@ class Game:
         print("lost ", end = "") 
         print(lost, end = "")
         print(" times in ", end = "")
-        print(episodes, end = "")
+        print(EPISODES, end = "")
         print(" tries")
         
         # resetting the state of the environment
