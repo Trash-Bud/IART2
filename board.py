@@ -1,7 +1,6 @@
 from chess_piece import ChessPiece
 from position import Position
 
-
 class Board:
     def __init__(self, size: int, piece_num: int)-> None:
         # number of pieces that are going to be placed in the board

@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from chess_piece import ChessPiece
-
 from position import Position
-
-
 class Strategy(ABC):  # Strategy
     @abstractmethod
     def execute(self, position: Position, board_size, matrix):
