@@ -9,173 +9,118 @@ class Strategy(ABC):  # Strategy
     def execute(self, position: Position, board_size, matrix):
         pass
 
+    def adjacent_attacks(self,x,y,board_size,matrix):
+        attackedPositions = []
+        for i in range(x-1,x+2):
+            if (i < board_size and i >= 0):
+                for e in range(y-1,y+2):
+                    if (e < board_size and e >= 0):
+                        if type(matrix[e][i]) != ChessPiece:
+                            attackedPositions.append(Position(i,e))
+
+        return attackedPositions
+
+    def line_attacks(self,x,y,board_size,matrix):
+        attackedPositions = []
+        for i in range(x+1,board_size):
+            if type(matrix[y][i]) == ChessPiece:
+                        break
+            else:
+                attackedPositions.append(Position(i,y))
+
+        for i in range(x-1,-1,-1):
+            if type(matrix[y][i]) == ChessPiece:
+                        break
+            else:
+                attackedPositions.append(Position(i,y))
+
+        for i in range(y+1,board_size):
+            if type(matrix[i][x]) == ChessPiece:
+                        break
+            else:
+                attackedPositions.append(Position(x,i))
+
+        for i in range(y-1,-1,-1):
+            if type(matrix[i][x]) == ChessPiece:
+                        break
+            else:
+                attackedPositions.append(Position(x,i))
+
+        return attackedPositions
+
+
+    def diagonal_attacks(self, x, y, board_size, matrix):
+        attackedPositions = []
+        for i in range(x+1,board_size):
+            for e in range(y+1,board_size):
+                if abs(i - x) == abs(e - y):
+                    if type(matrix[e][i]) == ChessPiece:
+                        break
+                    else:
+                        attackedPositions.append(Position(i,e))
+        
+        for i in range(x-1,-1,-1):
+            for e in range(y-1,-1,-1):
+                if abs(i - x) == abs(e - y):
+                    if type(matrix[e][i]) == ChessPiece:
+                        break
+                    else:
+                        attackedPositions.append(Position(i,e))
+
+        for i in range(x+1,board_size):
+            for e in range(y-1,-1,-1):
+                if abs(i - x) == abs(e - y):
+                    if type(matrix[e][i]) == ChessPiece:
+                        break
+                    else:
+                        attackedPositions.append(Position(i,e))
+        
+        for i in range(x-1,-1,-1):
+            for e in range(y+1,board_size):
+                if abs(i - x) == abs(e - y):
+                    if type(matrix[e][i]) == ChessPiece:
+                        break
+                    else:
+                        attackedPositions.append(Position(i,e))
+        return attackedPositions
+
 
 class KingStrategy(Strategy):
     def execute(self, position: Position, board_size, matrix):
-        attackedPositions = []
+
         x = position.getX()
         y = position.getY()
 
-        for i in range(x - 1, x + 2):
-            if i < 0 or i >= board_size:
-                continue
-            for j in range(y - 1, y + 2):
-                if j < 0 or j >= board_size:
-                    continue
-                elif matrix[i][j] != ChessPiece:
-                    attackedPositions.append(Position(i, j))
-
-        return attackedPositions
-
+        return self.adjacent_attacks(x,y,board_size,matrix)
 
 class BishopStrategy(Strategy):
     def execute(self, position: Position, board_size, matrix):
-        attackedPositions = []
         x = position.getX()
         y = position.getY()
-        curr_row = x
-        curr_col = y
-        while curr_row > 0 and curr_col > 0:
-            curr_col -= 1
-            curr_row -= 1
-        # we have coordinate of the upper left of this diagonal
-        diagonal_1_attacked = []
-        while curr_col < board_size and curr_row < board_size:
-            if curr_row < x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                diagonal_1_attacked = []
-            if curr_row > x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                break
-            if curr_row != x and curr_col != y:
-                diagonal_1_attacked.append(Position(curr_row, curr_col))
-            curr_col += 1
-            curr_row += 1
-
-        curr_row = x
-        curr_col = y
-
-        while curr_row > 0 and curr_col < board_size - 1:
-            curr_row -= 1
-            curr_col += 1
-        # we have coordinate of the upper right of this diagonal
-        diagonal_2_attacked = []
-        while curr_col >= 0 and curr_row < board_size:
-            if curr_row < x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                diagonal_2_attacked = []
-            if curr_row > x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                break
-            if curr_row != x and curr_col != y:
-                diagonal_2_attacked.append(Position(curr_row, curr_col))
-
-            curr_col -= 1
-            curr_row += 1
-
-        curr_col = y
-        curr_row = x
-        attackedPositions = diagonal_1_attacked + diagonal_2_attacked
-        return attackedPositions
-
+        return self.diagonal_attacks(x,y,board_size,matrix)
 
 
 class QueenStrategy(Strategy):
     def execute(self, position: Position, board_size, matrix):
         attackedPositions = []
+
         x = position.getX()
         y = position.getY()
-        curr_row = x
-        curr_col = y
-        while curr_row > 0 and curr_col > 0:
-            curr_col -= 1
-            curr_row -= 1
-        # we have coordinate of the upper left of this diagonal
-        diagonal_1_attacked = []
-        while curr_col < board_size and curr_row < board_size:
-            if curr_row < x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                diagonal_1_attacked = []
-            if curr_row > x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                break
-            if curr_row != x and curr_col != y:
-                diagonal_1_attacked.append(Position(curr_row, curr_col))
-            curr_col += 1
-            curr_row += 1
 
-        curr_row = x
-        curr_col = y
+        diagonal_attacks = self.diagonal_attacks(x,y,board_size,matrix)
+        line_attacks = self.line_attacks(x,y,board_size,matrix)
+        adjacent_attacks = self.adjacent_attacks(x,y,board_size,matrix)
 
-        while curr_row > 0 and curr_col < board_size - 1:
-            curr_row -= 1
-            curr_col += 1
-        # we have coordinate of the upper right of this diagonal
-        diagonal_2_attacked = []
-        while curr_col >= 0 and curr_row < board_size:
-            if curr_row < x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                diagonal_2_attacked = []
-            if curr_row > x and type(matrix[curr_row][curr_col]) == ChessPiece:
-                break
-            if curr_row != x and curr_col != y:
-                diagonal_2_attacked.append(Position(curr_row, curr_col))
-
-            curr_col -= 1
-            curr_row += 1
-
-        curr_col = y
-        curr_row = x
-        attackedPositions = diagonal_1_attacked + diagonal_2_attacked
-        while curr_row > 0:
-            curr_row -= 1
-            if type(matrix[curr_row][y]) == ChessPiece:
-                break
-            attackedPositions.append(Position(curr_row, y))
-
-        curr_row = x
-        while curr_row < board_size - 1:
-            curr_row += 1
-            if type(matrix[curr_row][y]) == ChessPiece:
-                break
-            attackedPositions.append(Position(curr_row, y))
-
-        curr_col = y
-        while curr_col > 0:
-            curr_col -= 1
-            if type(matrix[x][curr_col]) == ChessPiece:
-                break
-            attackedPositions.append(Position(x, curr_col))
-
-        curr_col = y
-        while curr_col < board_size - 1:
-            curr_col += 1
-            if type(matrix[x][curr_col]) == ChessPiece:
-                break
-            attackedPositions.append(Position(x, curr_col))
+        attackedPositions = diagonal_attacks + line_attacks + adjacent_attacks
 
         return attackedPositions
-
 
 class RookStrategy(Strategy):
     def execute(self, position: Position, board_size, matrix):
-        attackedPositions = []
         x = position.getX()
         y = position.getY()
 
-        for j in range(y + 1, board_size):
-            if type(matrix[x][j]) == ChessPiece:
-                break
-            attackedPositions.append(Position(x, j))
-        for j in range(y - 1, -1, -1):
-            if type(matrix[x][j]) == ChessPiece:
-                break
-            attackedPositions.append(Position(x, j))
-
-        for i in range(x - 1, -1, -1):
-            if type(matrix[i][y]) == ChessPiece:
-                break
-            attackedPositions.append(Position(i, y))
-
-        for i in range(x + 1, board_size):
-            if type(matrix[i][y]) == ChessPiece:
-                break
-            attackedPositions.append(Position(i, y))
-
-        return attackedPositions
+        return self.line_attacks(x,y,board_size,matrix)
 
 
 class KnightStrategy(Strategy):

@@ -36,7 +36,7 @@ class Game:
                 ]
 
             board.add_snake(snake)
-            chess_pieces = ["k1","B1"]
+            chess_pieces = ["Q2","Q1"]
 
         except Exception as e:
             print(str(e))
@@ -75,7 +75,7 @@ class Game:
         # amount of games lost
         lost = 0
         # total number of episodes
-        episodes = 10000
+        episodes = 1000
         for episode in range(1, episodes + 1):
             # env reset so we start fresh each episode
             state = env.reset()
