@@ -111,7 +111,7 @@ class SnakeChessEnv(Env):
     def reset(self):
         # re-adding the chess pieces to the array
         for i in range(0,len(self.board.chess_pieces)):
-            self.chess_pieces.append(self.board.chess_pieces[i].representation)~
+            self.chess_pieces.append(self.board.chess_pieces[i].representation)
         # clearing the board
         self.board.clear()
         # resetting the index of the next chess piece to be played
