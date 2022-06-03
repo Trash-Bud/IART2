@@ -75,6 +75,7 @@ class BishopStrategy(Strategy):
         return attackedPositions
 
 
+
 class QueenStrategy(Strategy):
     def execute(self, position: Position, board_size, matrix):
         attackedPositions = []

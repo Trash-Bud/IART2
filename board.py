@@ -3,7 +3,8 @@ from position import Position
 
 
 class Board:
-    def __init__(self, size: int)-> None:
+    def __init__(self, size: int, piece_num: int)-> None:
+        self.piece_num = piece_num
         self.size = size
         board = []
         for i in range(0,size):
@@ -13,6 +14,32 @@ class Board:
             board.append(arr)
         self.board = board
         self.chess_pieces = []
+
+    def playable_squares(self):
+        num = []
+        for i in range(0,self.size):
+            for e in range(0,self.size):
+                if self.board[i][e] == " ":
+                    num.append([e,i])
+        return num
+
+    def playable_squares_num(self):
+        num = 0
+        for i in range(0,self.size):
+            for e in range(0,self.size):
+                if self.board[i][e] == " ":
+                    num += 1
+        return num
+
+
+    def snake_size(self):
+        num = 0
+        for i in range(0,self.size):
+            for e in range(0,self.size):
+                if self.board[i][e] == "O":
+                    num += 1
+        return num
+
     
     # snake is a list of positions
     def add_snake(self,snake):
@@ -57,20 +84,30 @@ class Board:
         print("   ",end = " ")
         for i in range(0,self.size):
             print(str(i),end = " ")
+        print("\n")
 
 
-    def add_piece(self, chess_piece: ChessPiece) -> None:
-        if not self.valid_pos(chess_piece.position):
+    def check_if_pos_is_valid(self, position: Position) -> None:
+        if not self.valid_pos(position):
             raise Exception("Piece error: position chosen is invalid")
 
-        x = chess_piece.position.getX()
-        y = chess_piece.position.getY()
+        x = position.getX()
+        y = position.getY()
 
         if (self.board[y][x] != " "):
             raise Exception("Piece error: Square is occupied")
+        return True
 
-        self.chess_pieces.append(chess_piece)
-        self.board[y][x] = chess_piece
+
+    def add_piece(self, chess_piece: ChessPiece) -> None:
+        x = chess_piece.position.getX()
+        y = chess_piece.position.getY()
+        try:
+            if self.check_if_pos_is_valid(chess_piece.position):
+                self.chess_pieces.append(chess_piece)
+                self.board[y][x] = chess_piece
+        except Exception as e:
+            raise e
 
     def remove_piece(self, position) -> None:
         if not self.valid_pos(position):
@@ -83,7 +120,7 @@ class Board:
     def valid_pos(self, position):
         return position.getX() < self.size  or position.getY() < self.size or position.getX() >= 0 or position.getY() >= 0
     
-    def check_win(self):
+    def get_attacks(self):
         nums = []
         for piece in self.chess_pieces:
             num = 0
@@ -91,7 +128,32 @@ class Board:
             for pos in l:
                 if self.board[pos.getY()][pos.getX()] == "O":
                     num += 1
+            nums.append(num)
+        return nums
 
-            if(nums.count(num) != len(nums)):
-                return False
+
+    def check_win(self):
+        nums = self.get_attacks()
+        if(nums.count(nums[0]) != len(nums)):
+            return False
         return True
+    
+    def end(self):
+        if self.piece_num == len(self.chess_pieces):
+            if self.check_win():
+                print("Game Won!")
+                return True
+            else:
+                print("Game Lost!")
+                return False
+
+    def clear(self):
+        for i in range(0,len(self.chess_pieces)):
+            self.chess_pieces.remove(self.chess_pieces[0])
+        for i in range(0,self.size):
+            for e in range(0, self.size):
+                if(self.board[i][e] != "O"):
+                    self.board[i][e] = " "
+
+
+
