@@ -37,8 +37,14 @@ class SnakeChessEnv(Env):
     def get_state(self, array):
         return self.states_array.index(array)
 
+    def get_state_from_index(self, index):
+        return self.states_array[index]
+
     def get_action(self, array):
         return self.actions_array.index(array)
+
+    def get_action_from_index(self, index):
+        return self.actions_array[index]
 
     def step(self, action):
         possible_moves_list = self.actions_array
@@ -49,6 +55,7 @@ class SnakeChessEnv(Env):
         self.state[self.piece_num] = pos
         reward = 0
         if self.board.end():
+            print(self.state)
             done = True
             reward = 10
         else:
@@ -65,8 +72,6 @@ class SnakeChessEnv(Env):
         self.board.draw_board()
     
     def reset(self):
-        print("resetting..")
-
         for i in range(0,len(self.board.chess_pieces)):
             self.chess_pieces.append(self.board.chess_pieces[i].representation)
         self.board.clear()
