@@ -80,7 +80,7 @@ class Game:
         # note: random choice already avoids these choices
         for i in range(0,env.observation_space_length):
             for e in range(0, env.action_space_length):
-                if env.get_state_from_index(i)[0] == env.get_action_from_index(e):
+                if env.get_action_from_index(e) in env.get_state_from_index(i):
                     q_table[i][e] = -np.Infinity
 
 
@@ -157,7 +157,7 @@ class Game:
         # note: random choice already avoids these choices
         for i in range(0,env.observation_space_length):
             for e in range(0, env.action_space_length):
-                if env.get_state_from_index(i)[0] == env.get_action_from_index(e):
+                if env.get_action_from_index(e) in env.get_state_from_index(i):
                     q_table[i][e] = -np.Infinity
 
 
