@@ -1,5 +1,11 @@
+from shutil import ExecError
+from sys import exec_prefix
 from chess_piece import ChessPiece
+from constants import BLACK, BLUE, GREEN, PIECES_DIC_IMG, RED, WHITE, WIDTH, USE_PYGAME
 from position import Position
+import pygame
+
+from pygame_utils import WIN
 
 class Board:
     def __init__(self, size: int, piece_num: int)-> None:
@@ -18,6 +24,30 @@ class Board:
         self.board = board
         #array of chess pieces placed in the board
         self.chess_pieces = []
+    
+        
+
+
+    def draw_squares(self):
+        WIN.fill(WHITE)
+        square_size = WIDTH//self.size
+        print(square_size)
+        l = []
+        for row in range(self.size):
+            for col in range(self.size):
+                if (self.board[col][row] == " "):
+                    pygame.draw.rect(WIN,BLACK,(row*square_size, col* square_size,square_size,square_size), width = 1)
+                elif (self.board[col][row] == "O"):
+                    pygame.draw.rect(WIN,GREEN,(row*square_size, col* square_size,square_size,square_size), width = 0)
+                else:
+                    image = pygame.image.load(PIECES_DIC_IMG[self.board[col][row].representation[0]])
+                    WIN.blit(image,(row*square_size, col* square_size))
+                    l += self.board[col][row].implementStrategy(self.size,self.board)
+                    
+        for i in l:
+            if self.board[i.getY()][i.getX()] == "O":
+                pygame.draw.rect(WIN,RED,(i.getX()*square_size, i.getY() *square_size,square_size,square_size), width = 0)
+           
 
     # gets the coordinates of all playable squares
     def playable_squares(self):
@@ -76,8 +106,12 @@ class Board:
             return True
         return False
 
-    # draws board to console
+    # draws board
     def draw_board(self):
+        if USE_PYGAME:
+            self.draw_squares()
+            pygame.display.update()
+
         for i in range(0,self.size):
             print(str(i) + " [",end = ' ')
             for e in range(0, self.size):
@@ -90,6 +124,7 @@ class Board:
         for i in range(0,self.size):
             print(str(i),end = " ")
         print("\n")
+
 
     # checks if chess piece can be placed in position
     def check_if_pos_is_valid(self, position: Position) -> None:

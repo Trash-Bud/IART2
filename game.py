@@ -1,12 +1,13 @@
 import random
-
+import time
 import numpy as np
 from board import Board
-from constants import ALPHA, EPISODES, EPSILON, GAMA, SHOW_EVERY
+from constants import ALPHA, EPISODES, EPSILON, GAMA, SHOW_EVERY, WHITE, USE_PYGAME
 from human_mode import HumanMode
 from position import Position
 from environment import SnakeChessEnv
 import matplotlib.pyplot as plt
+import pygame
 
 class Game:
 
@@ -58,7 +59,7 @@ class Game:
 
         except Exception as e:
             print(str(e))
-        
+        board.draw_board()
         self.choose_game_mode(board,chess_pieces)
 
     def human_mode(self, board, chess_pieces):
@@ -67,7 +68,16 @@ class Game:
         while not human_game.board.end():
             human_game.play()
         human_game.render()
-            
+
+    def pygame_render(self, env):
+        env.render()
+        time.sleep(0.1) 
+
+    def close_pygame(self):
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                exit(0)
 
     def play_q_learning(self, board, chess_pieces):
         # initializing the environment
@@ -96,8 +106,11 @@ class Game:
             episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
+            
+            if USE_PYGAME:
+                self.pygame_render(env)
 
-            print("Episode:{} -> ".format(episode), end = "")
+            #print("Episode:{} -> ".format(episode), end = "")
             done = False
        
             while not done:
@@ -149,8 +162,10 @@ class Game:
                     ag_ep_rewards['avg'].append(average_reward)
                     ag_ep_rewards['min'].append(min_v)
                     ag_ep_rewards['max'].append(max_v)
-                    #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
-                    
+
+                if USE_PYGAME:
+                    self.pygame_render(env)
+                    self.close_pygame()
 
         
         print("lost ", end = "") 
@@ -203,8 +218,9 @@ class Game:
             episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
-
-            print("Episode:{} -> ".format(episode), end = "")
+            if USE_PYGAME:
+                self.pygame_render(env)
+            #print("Episode:{} -> ".format(episode), end = "")
             done = False
 
             # calculating the first action before the episode really starts
@@ -266,6 +282,10 @@ class Game:
                     ag_ep_rewards['min'].append(min_v)
                     ag_ep_rewards['max'].append(max_v)
                     #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
+
+                if USE_PYGAME:
+                    self.pygame_render(env)
+                    self.close_pygame()
 
         
         print("lost ", end = "") 

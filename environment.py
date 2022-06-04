@@ -3,7 +3,6 @@ from chess_piece import ChessPiece
 from constants import PIECES_DIC
 from gym import Env
 from position import Position
-
 class SnakeChessEnv(Env):
   
     def __init__(self, board: Board, chess_pieces : list)-> None:
@@ -110,6 +109,8 @@ class SnakeChessEnv(Env):
     # function for rendering the board
     def render(self):
         self.board.draw_board()
+        
+
     
     # function for resetting the board so that it can be use again
     def reset(self):
