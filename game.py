@@ -2,10 +2,11 @@ import random
 
 import numpy as np
 from board import Board
-from constants import ALPHA, EPISODES, EPSILON, GAMA
+from constants import ALPHA, EPISODES, EPSILON, GAMA, SHOW_EVERY
 from human_mode import HumanMode
 from position import Position
 from environment import SnakeChessEnv
+import matplotlib.pyplot as plt
 
 class Game:
 
@@ -83,11 +84,16 @@ class Game:
                 if env.get_action_from_index(e) in env.get_state_from_index(i):
                     q_table[i][e] = -np.Infinity
 
+        # list to keep episode rewards
+        ep_rewards = []
+        # dictionary for average max and min rewards
+        ag_ep_rewards = {'ep':[],'avg':[],'min':[],'max':[]}
 
         # amount of games lost
         lost = 0
 
         for episode in range(1, EPISODES + 1):
+            episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
 
@@ -108,6 +114,8 @@ class Game:
 
                 # applying the action to the environment
                 next_state, reward, done, info = env.step(action)
+                #
+                episode_reward += reward
                 # getting the old value of the action on the old state
                 old_value = q_table[state, action]
                 # getting the old value of the best action of our new state
@@ -125,6 +133,24 @@ class Game:
                 
                 # setting the state for our next iteration
                 state = next_state
+
+                # appending episode reward
+                ep_rewards.append(episode_reward)
+                # SHOW_EVERY episodes we save data
+                if not episode % SHOW_EVERY:
+                    # get average
+                    average_reward = sum(ep_rewards[-SHOW_EVERY:])/len(ep_rewards[-SHOW_EVERY:])
+                    # get min
+                    min_v = min(ep_rewards[-SHOW_EVERY:])
+                    # get max
+                    max_v = max(ep_rewards[-SHOW_EVERY:])
+                    # adding dictionary
+                    ag_ep_rewards['ep'].append(episode)
+                    ag_ep_rewards['avg'].append(average_reward)
+                    ag_ep_rewards['min'].append(min_v)
+                    ag_ep_rewards['max'].append(max_v)
+                    #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
+                    
 
         
         print("lost ", end = "") 
@@ -144,6 +170,12 @@ class Game:
             state,reward,done,info = env.step(action)
         env.render()
 
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['avg'], label = "avg")
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['min'], label = "min")
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['max'], label = "max")
+        plt.legend(loc=4)
+        plt.show()
+
 
     def sarsa_algorithm(self, board, chess_pieces):
         # initializing the environment
@@ -160,10 +192,15 @@ class Game:
                 if env.get_action_from_index(e) in env.get_state_from_index(i):
                     q_table[i][e] = -np.Infinity
 
+        # list to keep episode rewards
+        ep_rewards = []
+        # dictionary for average max and min rewards
+        ag_ep_rewards = {'ep':[],'avg':[],'min':[],'max':[]}
 
         # amount of games lost
         lost = 0
         for episode in range(1, EPISODES + 1):
+            episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
 
@@ -205,11 +242,30 @@ class Game:
                 # if the reward is less than zero then we lost the game
                 if reward < 0:
                     lost += 1
+
+                episode_reward += reward
                 
                 # setting the state for our next iteration
                 state = next_state
                 # setting the action for our next iteration
                 action = next_action
+
+                # appending episode reward
+                ep_rewards.append(episode_reward)
+                # SHOW_EVERY episodes we save data
+                if not episode % SHOW_EVERY:
+                    # get average
+                    average_reward = sum(ep_rewards[-SHOW_EVERY:])/len(ep_rewards[-SHOW_EVERY:])
+                    # get min
+                    min_v = min(ep_rewards[-SHOW_EVERY:])
+                    # get max
+                    max_v = max(ep_rewards[-SHOW_EVERY:])
+                    # adding dictionary
+                    ag_ep_rewards['ep'].append(episode)
+                    ag_ep_rewards['avg'].append(average_reward)
+                    ag_ep_rewards['min'].append(min_v)
+                    ag_ep_rewards['max'].append(max_v)
+                    #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
 
         
         print("lost ", end = "") 
@@ -228,6 +284,13 @@ class Game:
             action = np.argmax(q_table[state])
             state,reward,done,info = env.step(action)
         env.render()
+
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['avg'], label = "avg")
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['min'], label = "min")
+        plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['max'], label = "max")
+        plt.legend(loc=4)
+        plt.show()
+        
             
 
         

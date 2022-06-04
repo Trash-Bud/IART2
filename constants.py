@@ -18,4 +18,7 @@ GAMA = 0.6
 EPSILON = 0.1
 
 # number of episodes
-EPISODES = 10000
+EPISODES = 20000
+
+# every 1000 episodes register data for analysis
+SHOW_EVERY = 500
