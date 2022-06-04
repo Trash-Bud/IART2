@@ -9,6 +9,8 @@ from environment import SnakeChessEnv
 import matplotlib.pyplot as plt
 import pygame
 
+from pygame_utils import close_pygame, pygame_render
+
 class Game:
 
     def __init__(self):
@@ -69,15 +71,6 @@ class Game:
             human_game.play()
         human_game.render()
 
-    def pygame_render(self, env):
-        env.render()
-        time.sleep(0.1) 
-
-    def close_pygame(self):
-        for event in pygame.event.get():
-            if event.type==pygame.QUIT:
-                pygame.quit()
-                exit(0)
 
     def play_q_learning(self, board, chess_pieces):
         # initializing the environment
@@ -108,7 +101,7 @@ class Game:
             state = env.reset()
             
             if USE_PYGAME:
-                self.pygame_render(env)
+                pygame_render(env)
 
             #print("Episode:{} -> ".format(episode), end = "")
             done = False
@@ -164,8 +157,8 @@ class Game:
                     ag_ep_rewards['max'].append(max_v)
 
                 if USE_PYGAME:
-                    self.pygame_render(env)
-                    self.close_pygame()
+                    pygame_render(env)
+                    close_pygame()
 
         
         print("lost ", end = "") 
@@ -219,7 +212,7 @@ class Game:
             # env reset so we start fresh each episode
             state = env.reset()
             if USE_PYGAME:
-                self.pygame_render(env)
+                pygame_render(env)
             #print("Episode:{} -> ".format(episode), end = "")
             done = False
 
@@ -284,8 +277,8 @@ class Game:
                     #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
 
                 if USE_PYGAME:
-                    self.pygame_render(env)
-                    self.close_pygame()
+                    pygame_render(env)
+                    close_pygame()
 
         
         print("lost ", end = "") 
