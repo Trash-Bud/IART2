@@ -79,14 +79,6 @@ class Game:
         #creating q_table full of zeroes
         q_table = np.zeros([env.observation_space_length,env.action_space_length])
 
-        # some choice state combinations are impossible so we are setting the value of 
-        # that choice to -infinity so that they are when we are being greedy
-        # note: random choice already avoids these choices
-        for i in range(0,env.observation_space_length):
-            for e in range(0, env.action_space_length):
-                if env.get_action_from_index(e) in env.get_state_from_index(i):
-                    q_table[i][e] = -np.Infinity
-
         # list to keep episode rewards
         ep_rewards = []
         # dictionary for average max and min rewards
@@ -191,14 +183,6 @@ class Game:
 
         #creating q_table full of zeroes
         q_table = np.zeros([env.observation_space_length,env.action_space_length])
-
-        # some choice state combinations are impossible so we are setting the value of 
-        # that choice to -infinity so that they are when we are being greedy
-        # note: random choice already avoids these choices
-        for i in range(0,env.observation_space_length):
-            for e in range(0, env.action_space_length):
-                if env.get_action_from_index(e) in env.get_state_from_index(i):
-                    q_table[i][e] = -np.Infinity
 
         # list to keep episode rewards
         ep_rewards = []

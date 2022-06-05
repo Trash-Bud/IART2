@@ -42,4 +42,4 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 
 # variable for using pygame
-USE_PYGAME = True
+USE_PYGAME = False

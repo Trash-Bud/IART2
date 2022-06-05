@@ -74,6 +74,9 @@ class SnakeChessEnv(Env):
     def step(self, action):
         # get position chosen in action
         pos = self.actions_array[action]
+        # getting punishing invalid actions
+        if pos not in self.board.playable_squares():
+            return self.get_state(self.state), -100, False, {}
         # create chess piece
         chess_piece = ChessPiece(Position(pos[0],pos[1]),PIECES_DIC[self.chess_pieces[0][0]],self.chess_pieces[0])
         # remove chess piece from chess pieces still not played 
