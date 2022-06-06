@@ -106,9 +106,8 @@ class QueenStrategy(Strategy):
 
         diagonal_attacks = self.diagonal_attacks(x,y,board_size,matrix)
         line_attacks = self.line_attacks(x,y,board_size,matrix)
-        adjacent_attacks = self.adjacent_attacks(x,y,board_size,matrix)
 
-        attackedPositions = diagonal_attacks + line_attacks + adjacent_attacks
+        attackedPositions = diagonal_attacks + line_attacks
 
         return attackedPositions
 
