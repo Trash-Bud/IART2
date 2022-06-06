@@ -35,11 +35,75 @@ class Game:
                 print("Choose a valid option")
 
     def choose_difficulty(self):
-        print("Choose a difficulty!")
-        print("You chose easy mode!")
-        self.easy_mode()
+        while True:
+            print("\nChoose a game")
 
-    def easy_mode(self):
+            inp = input("1, 2 or 3: ")
+
+            if (str(inp) == '1'):
+                self.game_1()
+                break
+            elif (str(inp) == '2'):
+                self.game_2()
+                break
+            elif (str(inp) == '3'):
+                self.game_3()
+                break
+            else:
+                print("Choose a valid option")
+
+
+    def game_3(self):
+        try:
+            board = Board(5,2)
+            snake = [
+                Position(0,4),
+                Position(0,3),
+                Position(1,3),
+                Position(1,2),
+                Position(1,1),
+                Position(2,1),
+                Position(3,1),
+                Position(4,1),
+                Position(4,0)
+                ]
+
+            board.add_snake(snake)
+            chess_pieces = ["K1","Q1"]
+
+        except Exception as e:
+            print(str(e))
+        board.draw_board()
+        self.choose_game_mode(board,chess_pieces)
+
+    def game_2(self):
+        try:
+            board = Board(5,2)
+            snake = [
+                Position(0,4),
+                Position(0,3),
+                Position(0,2),
+                Position(0,1),
+                Position(0,0),
+                Position(1,0),
+                Position(2,0),
+                Position(2,1),
+                Position(2,2),
+                Position(3,2),
+                Position(4,2),
+                Position(4,1),
+                Position(4,0)
+                ]
+
+            board.add_snake(snake)
+            chess_pieces = ["K1","Q1"]
+
+        except Exception as e:
+            print(str(e))
+        board.draw_board()
+        self.choose_game_mode(board,chess_pieces)
+
+    def game_1(self):
         try:
             board = Board(5,2)
             snake = [

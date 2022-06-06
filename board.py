@@ -182,6 +182,15 @@ class Board:
                     num += 1
             nums.append(num)
         return nums
+    
+    def get_attacks_val(self):
+        for piece in self.chess_pieces:
+            print(piece.representation)
+            l = piece.implementStrategy(self.size,self.board)
+            for pos in l:
+                if self.board[pos.getY()][pos.getX()] == "O":
+                    print(str(pos.getX())+","+ str(pos.getY()))
+
 
     # checks if the game was won
     def check_win(self):
