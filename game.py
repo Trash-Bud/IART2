@@ -1,15 +1,16 @@
 import random
-import time
 import numpy as np
+import pygame
 from board import Board
-from constants import ALPHA, EPISODES, EPSILON, GAMA, SHOW_EVERY, WHITE, USE_PYGAME
+from constants import ALPHA, EPISODES, EPSILON, GAMA, SHOW_EVERY, USE_PYGAME
 from human_mode import HumanMode
 from position import Position
 from environment import SnakeChessEnv
 import matplotlib.pyplot as plt
-import pygame
 
-from pygame_utils import close_pygame, pygame_render
+from pygame_utils import draw_board, window_settings
+
+
 
 
 class Game:
@@ -19,21 +20,28 @@ class Game:
 
     def choose_game_mode(self, board, chess_pieces):
         while True:
+            
             print("\nChoose Game Mode!")
-
             inp = input("A - player   B - Q-learning  C - SARSA: ")
 
             if (str(inp) == 'B'):
+                self.window = window_settings()
                 self.play_q_learning(board, chess_pieces)
                 break
             elif (str(inp) == 'C'):
+                self.window = window_settings()
                 self.sarsa_algorithm(board, chess_pieces)
                 break
             elif (str(inp) == 'A'):
+                self.window = window_settings()
                 self.human_mode(board, chess_pieces)
                 break
             else:
                 print("Choose a valid option")
+
+       
+            
+        pygame.quit()
 
     def choose_difficulty(self):
         while True:
@@ -125,6 +133,7 @@ class Game:
 
         except Exception as e:
             print(str(e))
+
         board.draw_board()
         self.choose_game_mode(board, chess_pieces)
 
@@ -132,7 +141,12 @@ class Game:
         human_game = HumanMode(board, chess_pieces)
         human_game.render()
         while not human_game.board.end():
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    break
+            draw_board(self.window,board.board,board.size)
             human_game.play()
+
         human_game.render()
 
     def play_q_learning(self, board, chess_pieces):
@@ -152,17 +166,23 @@ class Game:
         lost = 0
 
         for episode in range(1, EPISODES + 1):
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    break
+            draw_board(self.window,board.board,board.size)
+
             episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
-
-            if USE_PYGAME:
-                pygame_render(env)
 
             #print("Episode:{} -> ".format(episode), end = "")
             done = False
 
             while not done:
+                for event in pygame.event.get():
+                    if event.type==pygame.QUIT:
+                        break
+                draw_board(self.window,board.board,board.size)
 
                 if random.uniform(0, 1) < EPSILON:  # if choice is random
                     # choosing an existing valid position for our chess piece
@@ -215,9 +235,6 @@ class Game:
                     ag_ep_rewards['min'].append(min_v)
                     ag_ep_rewards['max'].append(max_v)
 
-                if USE_PYGAME:
-                    pygame_render(env)
-                    close_pygame()
 
         print("lost ", end="")
         print(lost, end="")
@@ -231,10 +248,13 @@ class Game:
 
         # for the last iteration we always get the best state
         while not done:
-            env.render()
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    break
+            draw_board(self.window,board.board,board.size)
+
             action = np.argmax(q_table[state])
             state, reward, done, info = env.step(action)
-        env.render()
 
         plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['avg'], label="avg")
         plt.plot(ag_ep_rewards['ep'], ag_ep_rewards['min'], label="min")
@@ -258,11 +278,15 @@ class Game:
         # amount of games lost
         lost = 0
         for episode in range(1, EPISODES + 1):
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    break
+            draw_board(self.window,board.board,board.size)
+
             episode_reward = 0
             # env reset so we start fresh each episode
             state = env.reset()
-            if USE_PYGAME:
-                pygame_render(env)
+            
             #print("Episode:{} -> ".format(episode), end = "")
             done = False
 
@@ -275,6 +299,11 @@ class Game:
                 action = np.argmax(q_table[state])
 
             while not done:
+                for event in pygame.event.get():
+                    if event.type==pygame.QUIT:
+                        break
+                draw_board(self.window,board.board,board.size)
+
                 # applying the action to the environment
                 next_state, reward, done, info = env.step(action)
                 # getting the old value of the action on the old state
@@ -329,9 +358,6 @@ class Game:
                     ag_ep_rewards['max'].append(max_v)
                     #print("Episode: {} Average: {} Min: {} Max: {}".format(episode,average_reward,min_v,max_v))
 
-                if USE_PYGAME:
-                    pygame_render(env)
-                    close_pygame()
 
         print("lost ", end="")
         print(lost, end="")
