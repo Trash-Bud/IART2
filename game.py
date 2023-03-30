@@ -143,6 +143,7 @@ class Game:
     def human_mode(self, board, chess_pieces):
         pos = None
         human_game = HumanMode(board, chess_pieces)
+        print(human_game.chess_pieces)
         while not human_game.board.end():
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
