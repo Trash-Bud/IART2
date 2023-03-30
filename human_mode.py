@@ -9,18 +9,17 @@ class HumanMode:
         self.board = board
         self.chess_pieces = chess_pieces
 
-    def play(self):
-        move = input('Insert the piece to play and the position to play it in. Format: <ChessPiece> <X> <Y> (Ex.: K 1 2) \n')
+    def play(self,pos):
         try:
-            moveS = move.split(" ")
-            self.check_input(moveS)
-            chosen_pos = Position(int(moveS[1]),int(moveS[2]))
-            strategy = PIECES_DIC[moveS[0][0]]
-            chess_piece_rep = moveS[0]
-            chess_piece = ChessPiece(chosen_pos,strategy,chess_piece_rep)
-            self.board.add_piece(chess_piece)
-            self.chess_pieces.remove(moveS[0])
-            self.render()
+            if pos != None and self.chess_pieces != []:
+                print(self.chess_pieces)
+                print(pos)
+                chosen_pos = Position(int(pos[0]),int(pos[1]))
+                strategy = PIECES_DIC[self.chess_pieces[0][0]]
+                chess_piece_rep = self.chess_pieces[0]
+                chess_piece = ChessPiece(chosen_pos,strategy,chess_piece_rep)
+                self.board.add_piece(chess_piece)
+                self.chess_pieces.remove(self.chess_pieces[0])
         except Exception as e:
             print(str(e))
 

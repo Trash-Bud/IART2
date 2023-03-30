@@ -11,7 +11,7 @@ def window_settings():
     pygame.display.set_caption('Chess Snake')
     return window
 
-def draw_board(window,  board,size):
+def draw_board(window, board,size):
     window.fill(WHITE)
     square_size = WIDTH//size
     l = []
@@ -38,3 +38,10 @@ def draw_board(window,  board,size):
             pygame.draw.rect(window, RED, (i.getX()*square_size, i.getY()
                                 * square_size, square_size, square_size), width=0)
     pygame.display.update()
+
+def process_mouse_press(mouse_pos, board_size):
+        # find which square has been pressed
+        if mouse_pos[1] > HEIGHT:
+            return None
+        square_size = int(WIDTH/ board_size)
+        return ( mouse_pos[0] // square_size,mouse_pos[1] // square_size)

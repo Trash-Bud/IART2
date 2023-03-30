@@ -170,12 +170,11 @@ class Board:
     def end(self):
         if self.piece_num == len(self.chess_pieces):
             if self.check_win():
-
                 print("Game Won!")
                 return True
             else:
                 print("Game Lost!")
-                return False
+                return True
 
     # clears board but without removing the snake
     def clear(self):

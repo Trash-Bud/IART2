@@ -8,7 +8,7 @@ from position import Position
 from environment import SnakeChessEnv
 import matplotlib.pyplot as plt
 
-from pygame_utils import draw_board, window_settings
+from pygame_utils import draw_board, process_mouse_press, window_settings
 
 
 
@@ -38,9 +38,7 @@ class Game:
                 break
             else:
                 print("Choose a valid option")
-
-       
-            
+        pygame.display.quit()
         pygame.quit()
 
     def choose_difficulty(self):
@@ -138,16 +136,19 @@ class Game:
         self.choose_game_mode(board, chess_pieces)
 
     def human_mode(self, board, chess_pieces):
+        pos = None
         human_game = HumanMode(board, chess_pieces)
-        human_game.render()
         while not human_game.board.end():
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     break
+                if pygame.mouse.get_pressed()[0]:
+                    mouse_pos = pygame.mouse.get_pos()
+                    pos = process_mouse_press(mouse_pos,5)
             draw_board(self.window,board.board,board.size)
-            human_game.play()
+            human_game.play(pos)
+            pos = None
 
-        human_game.render()
 
     def play_q_learning(self, board, chess_pieces):
         # initializing the environment
