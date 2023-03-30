@@ -20,7 +20,6 @@ class Game:
 
     def choose_game_mode(self, board, chess_pieces):
         while True:
-            
             print("\nChoose Game Mode!")
             inp = input("A - player   B - Q-learning  C - SARSA: ")
 
@@ -38,8 +37,14 @@ class Game:
                 break
             else:
                 print("Choose a valid option")
-        pygame.display.quit()
-        pygame.quit()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.display.quit()
+                    pygame.quit()
+                    break
+
 
     def choose_difficulty(self):
         while True:
@@ -148,6 +153,7 @@ class Game:
             draw_board(self.window,board.board,board.size)
             human_game.play(pos)
             pos = None
+        draw_board(self.window,board.board,board.size)
 
 
     def play_q_learning(self, board, chess_pieces):
